@@ -1,0 +1,10 @@
+Juan,75,120
+Ana,62,110
+Carlos,85,130
+Lucía,55,95
+Pedro,90,140
+Sofía,68,105
+Luis,80,125
+Marta,70,115
+Raúl,78,135
+Elena,65,100
