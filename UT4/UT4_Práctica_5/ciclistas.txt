@@ -8,3 +8,4 @@ Luis,80,125
 Marta,70,115
 Raúl,78,135
 Elena,65,100
+Mario,890100
