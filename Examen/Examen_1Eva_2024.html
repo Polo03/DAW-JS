@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>Faltas de Asistencia:</title>
+    <script type="text/javascript" src="examen_1eva_2023_v0.js"; ></script>
+    <link rel="stylesheet" type="text/css" href="estilo.css">
+</head>
+
+<body>
+<H1><strong>Consulta de faltas de asistencia.</strong></H1>
+
+    <pre id="contenido-archivo"></pre>
+    <label class="custom-file-upload" for="file-input">Fichero Faltas</label>
+    
+    <input class="button" type="file" id="file-input" value="Fichero alumnos">
+    <br>
+    <select class="select-css" name="datos" multiple=true id="datos" size="5" width="400">
+    </select>
+    <table border="0" style="width: 100%; border-collapse: collapse; border-style: none;">
+        <tbody>
+            <tr>
+                <td style="width: 50%;">
+                    <p>Nombre:</p>
+                    <p><input id="nombre" name="nombre" type="text" value="nombre" /></p>
+                    
+                </td>
+                <td style="width: 50%;">
+                    <p>Apellidos:</p>
+                    <p><input id="apellidos" name="apellidos" type="text" value="apellidos" /></p>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">
+                    <p>Expediente:</p>
+                    <p><input id="expediente" name="expediente" type="text" value="expediente" /></p>
+                </td>
+                <td style="width: 50%;">
+                    <p>Nº Faltas actuales:</p>
+                    <p><input id="faltas" name="faltas" type="text" value="faltas" /></p>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 50%;">
+                    <p>Porcentaje Faltas (%):</p>
+                    <p><input id="porcentaje" name="porcentaje" type="text" value="porcentaje" /></p>
+                </td>
+                <td style="width: 50%;">
+                    <p>Nº faltas pendientes para la perdida de evaluación continua)</p>
+                    <p>(115 horas * 15%) - faltas actuales </p>
+                    <p><input id="resta" name="resta" type="text" value="resta" /></p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p></p>
+    
+    <button class="button" id="siguiente" >
+        <span id="siguiente" class="submit">Siguiente</span>
+    </button>
+    
+
+    <p></p>
+</body>
+</html>
