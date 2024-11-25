@@ -7,14 +7,13 @@ window.onload = function() {
             reader.onload = function(e) {
                 var contenidoFichero = e.target.result;
                 var alumnosObjectArray=[];
-                var alumnos = contenidoFichero.split('\r\n');
+                var alumnos = contenidoFichero.split('\n');
                 alumnos.forEach((alumno,key) => {
                     if(key>=1){
                         alumnoDividido=alumno.split('|');
                         var alumnoObject=new Alumno(alumnoDividido[0], alumnoDividido[1], alumnoDividido[2], alumnoDividido[4]);
                         alumnosObjectArray.push(alumnoObject);
                     }
-                    
                 });
                 operaConAlumnos(alumnosObjectArray);
             };
@@ -32,14 +31,7 @@ window.onload = function() {
             container.appendChild(optionElement); 
         });
         document.getElementById('siguiente').addEventListener('click', function(event) {
-            // alumnosSeleccionados=container.value;
-            // console.log(alumnosSeleccionados);
-             var alumnosMostrarDatos=[];
-            // alumnos.forEach(alumno => {
-            //     if(alumnosSeleccionados.split(' ')[0]==alumno.nombre)
-            //         alumnosMostrarDatos=alumno;
-            // });
-            // 
+            var alumnosMostrarDatos=[];
             var seleccionados = Array.from(container.selectedOptions); // Convierte la colección en un array
             
             // Extraer los valores seleccionados
@@ -57,15 +49,8 @@ window.onload = function() {
         
     }
     function muestraDatosAlumnos(alumnos){ 
-        // document.getElementById('nombre').outerText = alumno.nombre;
-        // document.getElementById('apellidos').outerText = alumno.apellido;
-        // document.getElementById('expediente').outerText = alumno.expediente;
-        // document.getElementById('faltas').outerText = alumno.faltas;
-        // document.getElementById('porcentaje').outerText = (alumno.faltas * 100) / 115 + '%';
-        // document.getElementById('resta').outerText = (115*0,15) - alumno.faltas;
-        // Índice que lleva el seguimiento del elemento que se está mostrando
         let indice = 0;
-       
+    
         // Referencias a los elementos HTML
         const siguienteButton = document.getElementById("siguiente");
         const nombre = document.getElementById("nombre");
@@ -82,7 +67,7 @@ window.onload = function() {
             expediente.value=alumnos[indice].expediente;
             faltas.value=alumnos[indice].faltas;
             porcentaje.value=(alumnos[indice].faltas * 100) / 115 + '%';
-            faltas.value=(115*0,15) - alumnos[indice].faltas;
+            resta.value=(115*0,15) - alumnos[indice].faltas;
 
             if (indice == alumnos.length-1) 
                 indice=0;
