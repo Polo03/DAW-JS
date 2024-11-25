@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios 3</title>
+    <script src="ejercicio3.js"></script>
+</head>
+<body>
+    <!-- <button onclick="calculo()">Pulse el botón para ejecutar el ejercicio</button> -->
+    <script>
+        var numero = prompt ("Introduzca un número y le diremos si es primo");
+        var cont;
+        if(numero>1){
+            for(i=1;i<=numero;i++)
+                if(numero%i==0)
+                    cont++;
+    
+            if(cont==2)
+                alert("El número que usted ha introducido es primo");
+            else
+                alert("El número que usted ha introducido no es primo");
+            
+        }else
+            alert("El número que has introducido es menor a 0");     
+    </script>
+</body>
+</html>
