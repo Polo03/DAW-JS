@@ -1,0 +1,6 @@
+Nombre|Apellido|Expediente|año nacimiento|faltas 
+Fulanito|de Tal|2345B|2002|15
+Celia|Cobos|3245Z|1999|9
+Juan|Camacho|7777B|2004|18
+Lucas|Soler|1245A|2004|1
+David|Cano|3345A|2001|2
