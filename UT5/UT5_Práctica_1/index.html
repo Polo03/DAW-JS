@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario con inputs avanzados</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <h1>Formulario HTML con inputs avanzados</h1>
+    <form id="formulario">
+        <div class="form-group">
+            <label for="date">Fecha:</label>
+            <input type="date" id="date" name="date">
+        </div>
+        <div class="form-group">
+            <label for="range">Nivel de satisfacción (1-10):</label>
+            <input type="range" id="range" name="range" min="1" max="10">
+        </div>
+        <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password">
+        </div>
+        <div class="form-group">
+            <label for="tel">Número de teléfono:</label>
+            <input type="tel" id="tel" name="tel" placeholder="123 45 67 89">
+        </div>
+        <div class="form-group">
+            <label for="url">Sitio web:</label>
+            <input type="url" id="url" name="url" placeholder="https://example.com">
+        </div>
+        <button type="button" id="submitBtn">Enviar</button>
+    </form>
+
+    <h2>Datos rellenados:</h2>
+    <pre id="salida">Los datos ingresados aparecerán aquí...</pre>
+
+    <script src="index.js"></script>
+</body>
+</html>
