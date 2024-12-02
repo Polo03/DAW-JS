@@ -1,3 +1,4 @@
+window.onload = function() {
 // Referencia al formulario y al contenedor de salida
 const form = document.getElementById('formulario');
 const salida = document.getElementById('salida');
@@ -19,3 +20,5 @@ function mostrarDatos() {
 
 // Agregar el evento al botón
 submitButton.addEventListener('click', mostrarDatos);
+}
+
