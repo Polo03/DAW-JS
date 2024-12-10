@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="index1.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <form>
+        <label for="selectElement">Selecciona una opción (Select):</label>
+        <select id="selectElement">
+            <option value="opcion1">Opción 1</option>
+            <option value="opcion2">Opción 2</option>
+            <option value="opcion3">Opción 3</option>
+        </select>
+        <br><br>
+
+        <label for="datalistInput">Selecciona una opción (Datalist):</label>
+        <input list="datalistElement" id="datalistInput">
+        <datalist id="datalistElement">
+            <option value="Opción 1"></option>
+            <option value="Opción 2"></option>
+            <option value="Opción 3"></option>
+        </datalist>
+        <br><br>
+
+        <button type="button" onclick="mostrarValores()">Mostrar Valores</button>
+    </form>
+
+    <p id="resultado"></p>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="index2.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <form>
+        <!-- Select para elegir grupos a deshabilitar -->
+        <label for="groupSelector">Selecciona un grupo para deshabilitar:</label>
+        <select id="groupSelector" multiple>
+            <option value="group1">Grupo 1</option>
+            <option value="group2">Grupo 2</option>
+            <option value="group3">Grupo 3</option>
+        </select>
+        <br><br>
+
+        <!-- Segundo select con grupos (optgroup) -->
+        <label for="groupedOptions">Opciones con grupos:</label>
+        <select id="groupedOptions">
+            <optgroup label="Grupo 1" id="group1">
+                <option value="opcion1-1">Opción 1-1</option>
+                <option value="opcion1-2">Opción 1-2</option>
+            </optgroup>
+            <optgroup label="Grupo 2" id="group2">
+                <option value="opcion2-1">Opción 2-1</option>
+                <option value="opcion2-2">Opción 2-2</option>
+            </optgroup>
+            <optgroup label="Grupo 3" id="group3">
+                <option value="opcion3-1">Opción 3-1</option>
+                <option value="opcion3-2">Opción 3-2</option>
+            </optgroup>
+        </select>
+        <br><br>
+
+        <!-- Botón para deshabilitar grupos -->
+        <button type="button" onclick="deshabilitarGrupos()">Deshabilitar Grupos</button>
+    </form>
+
+    <p id="resultado"></p>
+</body>
+</html>
