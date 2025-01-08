@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Cookies</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🍪 Gestión de Cookies</h1>
+    
+    <h3>Crear/Modificar Cookie</h3>
+    <input type="text" id="cookieName" placeholder="Nombre de la cookie">
+    <input type="text" id="cookieValue" placeholder="Valor de la cookie">
+    <input type="number" id="cookieDays" placeholder="Días de expiración">
+    <button onclick="handleSetCookie()">Crear/Modificar Cookie</button>
+    
+    <h3>Consultar Cookie</h3>
+    <input type="text" id="cookieQuery" placeholder="Nombre de la cookie">
+    <button onclick="handleGetCookie()">Consultar Cookie</button>
+    
+    <h3>Borrar Cookie</h3>
+    <input type="text" id="cookieDelete" placeholder="Nombre de la cookie">
+    <button onclick="handleDeleteCookie()">Borrar Cookie</button>
+    
+    <h3>Ver Todas las Cookies</h3>
+    <button onclick="handleShowCookies()">Mostrar Cookies</button>
+    
+    <div class="output" id="output"></div>
+
+    <script src="index.js"></script>
+</body>
+</html>
