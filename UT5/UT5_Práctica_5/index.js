@@ -1,20 +1,20 @@
 // Crear o modificar una cookie
 function setCookie(nombre, valor, dias) {
     let fecha = new Date();
-    fecha.setTime(fecha.getTime() + (dias * 24 * 60 * 60 * 1000)); 
+    fecha.setTime(fecha.getTime() + (dias * 24 * 60 * 60 * 1000));
     let expira = "expires=" + fecha.toUTCString();
-    document.cookie = `${encodeURIComponent(nombre)}=${encodeURIComponent(valor)}; ${expira}; path=/;`;
+    document.cookie = `${nombre}=${valor};${expira};path=/`;
     console.log(`✅ Cookie creada: ${nombre}=${valor}; ${expira}; path=/`);
 }
 
 // Obtener el valor de una cookie
 function getCookie(nombre) {
-    let nombreCookie = encodeURIComponent(nombre) + "=";
+    let nombreCookie = nombre + "=";
     let cookiesArray = document.cookie.split(';');
     for (let i = 0; i < cookiesArray.length; i++) {
         let cookie = cookiesArray[i].trim();
         if (cookie.indexOf(nombreCookie) === 0) {
-            return decodeURIComponent(cookie.substring(nombreCookie.length, cookie.length));
+            return cookie.substring(nombreCookie.length, cookie.length);
         }
     }
     return null;
@@ -22,17 +22,14 @@ function getCookie(nombre) {
 
 // Borrar una cookie
 function deleteCookie(nombre) {
-    document.cookie = `${encodeURIComponent(nombre)}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    document.cookie = `${nombre}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     console.log(`❌ Cookie eliminada: ${nombre}`);
 }
 
 // Mostrar todas las cookies
 function showCookies() {
     if (document.cookie) {
-        return document.cookie
-            .split(';')
-            .map(cookie => cookie.trim())
-            .join('\n');
+        return document.cookie.split(';').map(cookie => cookie.trim()).join('\n');
     }
     return 'No hay cookies disponibles';
 }
