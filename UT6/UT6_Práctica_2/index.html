@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Manipulation</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .miClase {
+            color: blue;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px 0;
+        }
+    </style>
+    <script src="index.js"></script>
+</head>
+<body>
+    <textarea id="texto" rows="4" cols="50" placeholder="Escribe algo aquí..."></textarea>
+    <br>
+    <button onclick="crearParrafo()">Crear Párrafo</button>
+    <button onclick="crearImagen()">Crear Imagen</button>
+    <button onclick="borrarUltimo()">Borrar Último</button>
+    <button onclick="borrarPrimero()">Borrar Primero</button>
+    <button onclick="sustituirPrimeroVacio()">Sustituir Primero Vacío</button>
+
+    <div id="contenedor">
+        <!-- Elementos generados dinámicamente se agregarán aquí -->
+    </div>
+</body>
+</html>
