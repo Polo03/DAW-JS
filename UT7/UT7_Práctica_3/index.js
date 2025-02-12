@@ -72,7 +72,7 @@ class GastosIngresos {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+window.onload = function() {
 
   // Obtener el botón "Consultar"
   var btnConsultar = document.getElementById('btnConsultar');
@@ -176,4 +176,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
       xhr.send();
   }
-});
+};
