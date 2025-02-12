@@ -148,7 +148,7 @@ window.onload = function() {
                   var tablaHTML = '<table id="tablaResultados">';
                   tablaHTML += '<thead><tr><th>ID</th><th>Operación</th><th>Valor</th><th>Descripción</th><th>Fecha</th><th>Concepto</th></tr></thead><tbody>';
 
-                  response.forEach(function(item) {
+                  gastosIngresos.forEach(function(item) {
                       tiposSeleccionados.forEach(function(tipo){
                         if(item.Ingreso_gasto == tipo){
                           tablaHTML += `<tr><td>${item.Id}</td><td>${item.Ingreso_gasto}</td><td>${item.Valor}</td><td>${item.Descripcion}</td><td>${item.Fecha}</td></td><td>${item.Id_concepto}</td></tr>`;
