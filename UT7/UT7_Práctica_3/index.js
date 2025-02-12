@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Event listener para el botón "Consultar"
   btnConsultar.addEventListener('click', function() {
+      this.disabled = true;
       // Mostrar los checkboxes para seleccionar Ingresos o Gastos
       checkboxesDiv.style.display = 'block';
   });
