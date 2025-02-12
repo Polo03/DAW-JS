@@ -151,31 +151,35 @@ window.onload = function() {
                 });
                 // Limpiar los resultados anteriores
                 resultadoDiv.innerHTML = '';
-                
+                var tablaHTML = '<table id="tablaResultados">';
+                tablaHTML += '<thead><tr><th>ID</th><th>Operación</th><th>Valor</th><th>Descripción</th><th>Fecha</th><th>Concepto</th></tr></thead><tbody>';
                 if (response) {
-                    gastosIngresos.forEach(function(item) {
-                        tiposSeleccionados.forEach(function(tipo){
-                          if(item.IngresoGasto == tipo){
-                            obtenerId(datoSeleccionado)
-                            .then(conceptoId => {
-                                // Crear una tabla con los resultados
-                                var tablaHTML = '<table id="tablaResultados">';
-                                tablaHTML += '<thead><tr><th>ID</th><th>Operación</th><th>Valor</th><th>Descripción</th><th>Fecha</th><th>Concepto</th></tr></thead><tbody>';
-  
-                                if(conceptoId==item.IdConcepto){
-                                    tablaHTML += `<tr><td>${item.Id}</td><td>${item.IngresoGasto}</td><td>${item.Valor}</td><td>${item.Descripcion}</td><td>${item.Fecha}</td></td><td>${item.IdConcepto}</td></tr>`;
-                                }
-                                
-                                tablaHTML += '</tbody></table>';
-                                // Mostrar los resultados en el div de resultados
-                                resultadoDiv.innerHTML = tablaHTML;
-                            }).catch(error => console.error("Error:", error));
+                    let promesas = gastosIngresos.flatMap(item => 
+                        tiposSeleccionados.map(tipo => {
+                            if (item.IngresoGasto === tipo) {
+                                return obtenerId(datoSeleccionado).then(conceptoId => {
+                                    if (conceptoId === item.IdConcepto || conceptoId === null) {
+                                        return `<tr>
+                                            <td>${item.Id}</td>
+                                            <td>${item.IngresoGasto}</td>
+                                            <td>${item.Valor}</td>
+                                            <td>${item.Descripcion}</td>
+                                            <td>${item.Fecha}</td>
+                                            <td>${item.IdConcepto}</td>
+                                        </tr>`;
+                                    }
+                                    return ''; // Si no cumple la condición, devuelve una cadena vacía
+                                });
                             }
-                        });
+                        })
+                    );
+        
+                    Promise.all(promesas).then(filas => {
+                        tablaHTML += filas.filter(row => row).join(''); // Agregar solo las filas válidas
+                        tablaHTML += '</tbody></table>';
+                        resultadoDiv.innerHTML = tablaHTML; // Ahora se asigna después de que todas las promesas se resuelvan
                     });
-                    console.log(resultadoDiv);
                 } else {
-                    // Si no se encontraron resultados
                     resultadoDiv.innerHTML = '<p>No se encontraron resultados.</p>';
                 }
             } else {
@@ -232,23 +236,6 @@ function cargarConceptos() {
         })
         .catch(error => console.error('Error cargando gastos:', error));
   }
-  
-  // Función para obtener conceptos desde el servidor y mostrarlos en un select
-/*function obtenerId(nombreConcepto) {
-    let id=0;
-    fetch('ConceptosObtenerTodos.php')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(concepto => {
-                if(concepto.nombre == nombreConcepto){
-                    id = concepto.id;
-                }
-                
-            });
-        })
-        .catch(error => console.error('Error cargando conceptos:', error));
-        return id;
-  }*/
 
   async function obtenerId(nombreConcepto) {
     try {
