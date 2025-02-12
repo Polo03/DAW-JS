@@ -87,6 +87,8 @@ window.onload = function() {
   // Obtener el div de resultados
   var resultadoDiv = document.getElementById('resultado');
 
+  const select = document.getElementById('conceptosSelect');
+
   // Event listener para el botón "Consultar"
   btnConsultar.addEventListener('click', function() {
       this.disabled = true;
@@ -94,13 +96,18 @@ window.onload = function() {
       checkboxesDiv.style.display = 'block';
   });
 
+  
+
+  cargarConceptos();
   // Event listener para los cambios en los checkboxes
   ingresoCheckbox.addEventListener('change', actualizarTabla);
   gastoCheckbox.addEventListener('change', actualizarTabla);
-  cargarConceptos();
-  document.getElementById('conceptosSelect').addEventListener('change', cargarGastos);
+  
+  select.addEventListener('change', actualizarTabla);
+  //document.getElementById('conceptosSelect').addEventListener('change', cargarGastos);
   // Función para obtener y actualizar los datos según los checkboxes seleccionados
   function actualizarTabla() {
+
       // Crear un array con los tipos seleccionados
       var tiposSeleccionados = [];
 
@@ -117,21 +124,85 @@ window.onload = function() {
           return;
       }
 
+      let datoSeleccionado = select.options[select.selectedIndex].textContent;
+
       // Realizar la solicitud AJAX para obtener los datos
-      obtenerDatos(tiposSeleccionados);
+      obtenerDatos(tiposSeleccionados, datoSeleccionado);
   }
+
+    // Función para realizar la solicitud AJAX
+    function obtenerDatos(tiposSeleccionados, datoSeleccionado) {        
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'GastosObtenerTodos.php?tipos=' + JSON.stringify(tiposSeleccionados), true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+  
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                let gastosIngresos=response.map(item => {
+                  return new GastosIngresos(
+                      item.Id,
+                      item.Ingreso_gasto,
+                      item.Valor,
+                      item.Descripcion,
+                      item.Fecha,
+                      item.Id_concepto
+                  );
+                });
+                // Limpiar los resultados anteriores
+                resultadoDiv.innerHTML = '';
+                
+                if (response) {
+                    gastosIngresos.forEach(function(item) {
+                        tiposSeleccionados.forEach(function(tipo){
+                          if(item.IngresoGasto == tipo){
+                            obtenerId(datoSeleccionado)
+                            .then(conceptoId => {
+                                // Crear una tabla con los resultados
+                                var tablaHTML = '<table id="tablaResultados">';
+                                tablaHTML += '<thead><tr><th>ID</th><th>Operación</th><th>Valor</th><th>Descripción</th><th>Fecha</th><th>Concepto</th></tr></thead><tbody>';
+  
+                                if(conceptoId==item.IdConcepto){
+                                    tablaHTML += `<tr><td>${item.Id}</td><td>${item.IngresoGasto}</td><td>${item.Valor}</td><td>${item.Descripcion}</td><td>${item.Fecha}</td></td><td>${item.IdConcepto}</td></tr>`;
+                                }
+                                
+                                tablaHTML += '</tbody></table>';
+                                // Mostrar los resultados en el div de resultados
+                                resultadoDiv.innerHTML = tablaHTML;
+                            }).catch(error => console.error("Error:", error));
+                            }
+                        });
+                    });
+                    console.log(resultadoDiv);
+                } else {
+                    // Si no se encontraron resultados
+                    resultadoDiv.innerHTML = '<p>No se encontraron resultados.</p>';
+                }
+            } else {
+                // Si hubo un error en la solicitud
+                resultadoDiv.innerHTML = '<p>Error al realizar la consulta.</p>';
+            }
+        };
+  
+        xhr.onerror = function() {
+            resultadoDiv.innerHTML = '<p>Hubo un error al procesar la solicitud.</p>';
+        };
+  
+        xhr.send();
+    }
+  };
 // Función para obtener conceptos desde el servidor y mostrarlos en un select
 function cargarConceptos() {
     fetch('ConceptosObtenerTodos.php')
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('conceptosSelect');
+            // Limpiar el select antes de agregar nuevas opciones
             select.innerHTML = '<option value="">Seleccione un concepto</option>';
             data.forEach(concepto => {
-                console.log(concepto);
                 const option = document.createElement('option');
-                option.value = concepto.Id;
-                option.textContent = concepto.Nombre;
+                option.value = concepto.id;
+                option.textContent = concepto.nombre; // Mejor usar textContent en lugar de .text
                 select.appendChild(option);
             });
         })
@@ -140,7 +211,7 @@ function cargarConceptos() {
   
   // Función para obtener gastos y mostrarlos en una tabla filtrando por concepto
   function cargarGastos() {
-    const conceptoId = document.getElementById('conceptosSelect').value;
+    const conceptoId = select.options[select.selectedIndex].textContent;     
     fetch(`GastosObtenerTodos.php?conceptoId=${conceptoId}`)
         .then(response => response.json())
         .then(data => {
@@ -148,9 +219,10 @@ function cargarConceptos() {
             tabla.innerHTML = '<tr><th>ID</th><th>Tipo</th><th>Valor</th><th>Descripción</th><th>Fecha</th></tr>';
             data.forEach(gasto => {
                 const fila = document.createElement('tr');
+                
                 fila.innerHTML = `
                     <td>${gasto.Id}</td>
-                    <td>${gasto.IngresoGasto}</td>
+                    <td>${gasto.Ingreso_gasto}</td>
                     <td>${gasto.Valor}</td>
                     <td>${gasto.Descripcion}</td>
                     <td>${gasto.Fecha}</td>
@@ -161,60 +233,38 @@ function cargarConceptos() {
         .catch(error => console.error('Error cargando gastos:', error));
   }
   
-  // Función para realizar la solicitud AJAX
-  function obtenerDatos(tiposSeleccionados) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'GastosObtenerTodos.php?tipos=' + JSON.stringify(tiposSeleccionados), true);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-
-      xhr.onload = function() {
-          if (xhr.status === 200) {
-              var response = JSON.parse(xhr.responseText);
-              let gastosIngresos=response.map(item => {
-                return new GastosIngresos(
-                    item.Id,
-                    item.IngresoGasto,
-                    item.Valor,
-                    item.Descripcion,
-                    item.Fecha,
-                    item.IdConcepto
-                );
-              });
-              // Limpiar los resultados anteriores
-              resultadoDiv.innerHTML = '';
-
-              if (response) {
+  // Función para obtener conceptos desde el servidor y mostrarlos en un select
+/*function obtenerId(nombreConcepto) {
+    let id=0;
+    fetch('ConceptosObtenerTodos.php')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(concepto => {
+                if(concepto.nombre == nombreConcepto){
+                    id = concepto.id;
+                }
                 
-                  // Crear una tabla con los resultados
-                  var tablaHTML = '<table id="tablaResultados">';
-                  tablaHTML += '<thead><tr><th>ID</th><th>Operación</th><th>Valor</th><th>Descripción</th><th>Fecha</th><th>Concepto</th></tr></thead><tbody>';
+            });
+        })
+        .catch(error => console.error('Error cargando conceptos:', error));
+        return id;
+  }*/
 
-                  gastosIngresos.forEach(function(item) {
-                      tiposSeleccionados.forEach(function(tipo){
-                        if(item.Ingreso_gasto == tipo){
-                          tablaHTML += `<tr><td>${item.Id}</td><td>${item.Ingreso_gasto}</td><td>${item.Valor}</td><td>${item.Descripcion}</td><td>${item.Fecha}</td></td><td>${item.Id_concepto}</td></tr>`;
-                        }
-                      });
-                  });
+  async function obtenerId(nombreConcepto) {
+    try {
+        const response = await fetch('ConceptosObtenerTodos.php');
+        const data = await response.json();
 
-                  tablaHTML += '</tbody></table>';
+        // Buscar el concepto por nombre
+        const concepto = data.find(concepto => concepto.nombre === nombreConcepto);
 
-                  // Mostrar los resultados en el div de resultados
-                  resultadoDiv.innerHTML = tablaHTML;
-              } else {
-                  // Si no se encontraron resultados
-                  resultadoDiv.innerHTML = '<p>No se encontraron resultados.</p>';
-              }
-          } else {
-              // Si hubo un error en la solicitud
-              resultadoDiv.innerHTML = '<p>Error al realizar la consulta.</p>';
-          }
-      };
+        return concepto ? concepto.id : null; // Retorna el ID si se encuentra, si no, null
+    } catch (error) {
+        console.error('Error cargando conceptos:', error);
+        return null; // Retorna null en caso de error
+    }
+}
 
-      xhr.onerror = function() {
-          resultadoDiv.innerHTML = '<p>Hubo un error al procesar la solicitud.</p>';
-      };
 
-      xhr.send();
-  }
-};
+
+

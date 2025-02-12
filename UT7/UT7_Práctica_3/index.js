@@ -129,6 +129,7 @@ window.onload = function() {
       xhr.onload = function() {
           if (xhr.status === 200) {
               var response = JSON.parse(xhr.responseText);
+              
               let gastosIngresos=response.map(item => {
                 return new GastosIngresos(
                     item.Id,
@@ -143,12 +144,11 @@ window.onload = function() {
               resultadoDiv.innerHTML = '';
 
               if (response) {
-                
                   // Crear una tabla con los resultados
                   var tablaHTML = '<table id="tablaResultados">';
                   tablaHTML += '<thead><tr><th>ID</th><th>Operación</th><th>Valor</th><th>Descripción</th><th>Fecha</th><th>Concepto</th></tr></thead><tbody>';
 
-                  gastosIngresos.forEach(function(item) {
+                  response.forEach(function(item) {
                       tiposSeleccionados.forEach(function(tipo){
                         if(item.Ingreso_gasto == tipo){
                           tablaHTML += `<tr><td>${item.Id}</td><td>${item.Ingreso_gasto}</td><td>${item.Valor}</td><td>${item.Descripcion}</td><td>${item.Fecha}</td></td><td>${item.Id_concepto}</td></tr>`;
