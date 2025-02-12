@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Ingresos y Gastos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        #tablaResultados {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Consulta de Ingresos y Gastos</h1>
+
+    <!-- Botón para realizar la consulta -->
+    <button id="btnConsultar">Consultar</button>
+
+    <!-- Aquí se mostrarán los checkboxes de Ingresos y Gastos -->
+    <div id="checkboxes" style="display: none;">
+      <label>
+          <input type="checkbox" id="ingreso" value="Ingreso"> Ingreso
+      </label>
+      <label>
+          <input type="checkbox" id="gasto" value="Gasto"> Gasto
+      </label>
+      <br><br>
+    </div>
+    
+    <!-- Mostrar los resultados de la consulta -->
+    <div id="resultado">
+        <!-- Los resultados de la consulta aparecerán aquí -->
+    </div>
+    <script src="index.js"></script>
+
+</body>
+</html>
