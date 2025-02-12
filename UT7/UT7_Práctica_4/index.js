@@ -136,57 +136,73 @@ window.onload = function() {
         xhr.open('GET', 'GastosObtenerTodos.php?tipos=' + JSON.stringify(tiposSeleccionados), true);
         xhr.setRequestHeader('Content-Type', 'application/json');
   
-        xhr.onload = function() {
+        xhr.onload = function () {
             if (xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
-                let gastosIngresos=response.map(item => {
-                  return new GastosIngresos(
-                      item.Id,
-                      item.Ingreso_gasto,
-                      item.Valor,
-                      item.Descripcion,
-                      item.Fecha,
-                      item.Id_concepto
-                  );
+                let gastosIngresos = response.map(item => {
+                    return new GastosIngresos(
+                        item.Id,
+                        item.Ingreso_gasto,
+                        item.Valor,
+                        item.Descripcion,
+                        item.Fecha,
+                        item.Id_concepto
+                    );
                 });
+        
                 // Limpiar los resultados anteriores
                 resultadoDiv.innerHTML = '';
-                var tablaHTML = '<table id="tablaResultados">';
-                tablaHTML += '<thead><tr><th>ID</th><th>Operación</th><th>Valor</th><th>Descripción</th><th>Fecha</th><th>Concepto</th></tr></thead><tbody>';
-                if (response) {
-                    let promesas = gastosIngresos.flatMap(item => 
-                        tiposSeleccionados.map(tipo => {
-                            if (item.IngresoGasto === tipo) {
-                                return obtenerId(datoSeleccionado).then(conceptoId => {
-                                    if (conceptoId === item.IdConcepto || conceptoId === null) {
-                                        return `<tr>
-                                            <td>${item.Id}</td>
-                                            <td>${item.IngresoGasto}</td>
-                                            <td>${item.Valor}</td>
-                                            <td>${item.Descripcion}</td>
-                                            <td>${item.Fecha}</td>
-                                            <td>${item.IdConcepto}</td>
-                                        </tr>`;
-                                    }
-                                    return ''; // Si no cumple la condición, devuelve una cadena vacía
-                                });
-                            }
-                        })
-                    );
         
-                    Promise.all(promesas).then(filas => {
-                        tablaHTML += filas.filter(row => row).join(''); // Agregar solo las filas válidas
-                        tablaHTML += '</tbody></table>';
-                        resultadoDiv.innerHTML = tablaHTML; // Ahora se asigna después de que todas las promesas se resuelvan
-                    });
-                } else {
-                    resultadoDiv.innerHTML = '<p>No se encontraron resultados.</p>';
-                }
+                // Crear la tabla
+                var tabla = document.createElement('table');
+                tabla.id = 'tablaResultados';
+        
+                // Crear el encabezado de la tabla
+                var thead = document.createElement('thead');
+                var trHead = document.createElement('tr');
+                ['ID', 'Operación', 'Valor', 'Descripción', 'Fecha', 'Concepto'].forEach(texto => {
+                    var th = document.createElement('th');
+                    th.textContent = texto;
+                    trHead.appendChild(th);
+                });
+                thead.appendChild(trHead);
+                tabla.appendChild(thead);
+        
+                // Crear el cuerpo de la tabla
+                var tbody = document.createElement('tbody');
+        
+                // Crear un array de promesas para manejar asincronía
+                let promesas = gastosIngresos.flatMap(item => 
+                    tiposSeleccionados.map(tipo => {
+                        if (item.IngresoGasto === tipo) {
+                            return obtenerId(datoSeleccionado).then(conceptoId => {
+                                if (conceptoId === item.IdConcepto || conceptoId === null) {
+                                    var tr = document.createElement('tr');
+        
+                                    [item.Id, item.IngresoGasto, item.Valor, item.Descripcion, item.Fecha, item.IdConcepto].forEach(valor => {
+                                        var td = document.createElement('td');
+                                        td.textContent = valor;
+                                        tr.appendChild(td);
+                                    });
+        
+                                    tbody.appendChild(tr);
+                                }
+                            });
+                        }
+                    })
+                );
+        
+                // Esperar a que todas las promesas se resuelvan antes de agregar la tabla al `resultadoDiv`
+                Promise.all(promesas).then(() => {
+                    tabla.appendChild(tbody);
+                    resultadoDiv.appendChild(tabla);
+                });
+        
             } else {
-                // Si hubo un error en la solicitud
                 resultadoDiv.innerHTML = '<p>Error al realizar la consulta.</p>';
             }
         };
+        
   
         xhr.onerror = function() {
             resultadoDiv.innerHTML = '<p>Hubo un error al procesar la solicitud.</p>';
