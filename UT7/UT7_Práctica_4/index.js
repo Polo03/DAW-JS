@@ -59,18 +59,18 @@ window.onload = function() {
           return;
       }
 
-      let datoSeleccionado = select.options[select.selectedIndex].textContent;
+      let valoresSeleccionados = Array.from(select.selectedOptions).map(option => option.value);
 
       // Realizar la solicitud AJAX para obtener los datos
-      obtenerDatos(tiposSeleccionados, datoSeleccionado);
+      obtenerDatos(tiposSeleccionados, valoresSeleccionados);
   }
 
     // Función para realizar la solicitud AJAX
-    function obtenerDatos(tiposSeleccionados, datoSeleccionado) {        
+    function obtenerDatos(tiposSeleccionados, valoresSeleccionados) {        
         var xhr = new XMLHttpRequest();
         xhr.open('GET', 'GastosObtenerTodos.php?tipos=' + JSON.stringify(tiposSeleccionados), true);
         xhr.setRequestHeader('Content-Type', 'application/json');
-  
+        //console.log(obtenerId(valoresSeleccionados));
         xhr.onload = function () {
             if (xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
@@ -99,16 +99,19 @@ window.onload = function() {
                 let promesas = gastosIngresos.flatMap(item => 
                     tiposSeleccionados.map(tipo => {
                         if (item.ingresoGasto === tipo) {
-                            return obtenerId(datoSeleccionado).then(conceptoId => { 
-                                if (conceptoId === item.idConcepto || conceptoId === null) {
-                                    var tr = document.createElement('tr');
-                                    [item.id, item.ingresoGasto, item.valor, item.descripcion, item.fecha, item.idConcepto].forEach(valor => {
-                                        var td = document.createElement('td');
-                                        td.textContent = valor;
-                                        tr.appendChild(td);
-                                    });
-                                    tbody.appendChild(tr);
-                                }
+                            return obtenerId(valoresSeleccionados).then(conceptos => { 
+                                conceptos.forEach(concepto => {
+                                    console.log(concepto +"==="+ item.idConcepto);
+                                    if (concepto == item.idConcepto || concepto === null) {
+                                        var tr = document.createElement('tr');
+                                        [item.id, item.ingresoGasto, item.valor, item.descripcion, item.fecha, item.idConcepto].forEach(valor => {
+                                            var td = document.createElement('td');
+                                            td.textContent = valor;
+                                            tr.appendChild(td);
+                                        });
+                                        tbody.appendChild(tr);
+                                    }
+                                });
                             });
                         }
                     })
@@ -151,15 +154,25 @@ function cargarConceptos() {
         .catch(error => console.error('Error cargando conceptos:', error));
   }
 
-  async function obtenerId(nombreConcepto) {
+  async function obtenerId(nombreConceptos) {
     try {
+        let conceptos=[];
         const response = await fetch('ConceptosObtenerTodos.php');
         const data = await response.json();
+        data.forEach(dato => {
+            nombreConceptos.forEach(concepto => {
+                if(dato.id==concepto){
+                    conceptos.push(concepto);
+                }
+               
+            });
+        });
+        return conceptos;
 
         // Buscar el concepto por nombre
-        const concepto = data.find(concepto => concepto.nombre === nombreConcepto);
+        //const concepto = data.find(concepto => concepto.nombre === nombreConcepto);
 
-        return concepto ? concepto.id : null; // Retorna el ID si se encuentra, si no, null
+        //return concepto ? concepto.id : null; // Retorna el ID si se encuentra, si no, null
     } catch (error) {
         console.error('Error cargando conceptos:', error);
         return null; // Retorna null en caso de error
