@@ -1,74 +1,12 @@
 class GastosIngresos {
   // Constructor para inicializar el objeto
-  constructor(Id, IngresoGasto, Valor, Descripcion, Fecha, IdConcepto) {
-      this._Id = Id || null;  // ID del gasto (puede ser null si es un nuevo gasto)
-      this._IngresoGasto = IngresoGasto || '';  // 'Ingreso' o 'Gasto'
-      this._Valor = Valor || 0.00;  // Monto del gasto o ingreso
-      this._Descripcion = Descripcion || '';  // Descripción del gasto
-      this._Fecha = Fecha || '';  // Fecha en formato 'YYYY-MM-DD'
-      this._IdConcepto = IdConcepto || 0;  // Id del concepto relacionado
-  }
-
-  // Getter y Setter para _Id
-  get Id() {
-      return this._Id;
-  }
-
-  set Id(value) {
-      this._Id = value;
-  }
-
-  // Getter y Setter para _IngresoGasto
-  get IngresoGasto() {
-      return this._IngresoGasto;
-  }
-
-  set IngresoGasto(value) {
-      this._IngresoGasto = value;
-  }
-
-  // Getter y Setter para _Valor
-  get Valor() {
-      return this._Valor;
-  }
-
-  set Valor(value) {
-      if (value >= 0) {
-          this._Valor = value;
-      } else {
-          console.error("El valor debe ser positivo.");
-      }
-  }
-
-  // Getter y Setter para _Descripcion
-  get Descripcion() {
-      return this._Descripcion;
-  }
-
-  set Descripcion(value) {
-      this._Descripcion = value;
-  }
-
-  // Getter y Setter para _Fecha
-  get Fecha() {
-      return this._Fecha;
-  }
-
-  set Fecha(value) {
-      this._Fecha = value;
-  }
-
-  // Getter y Setter para _IdConcepto
-  get IdConcepto() {
-      return this._IdConcepto;
-  }
-
-  set IdConcepto(value) {
-      if (Number.isInteger(value) && value > 0) {
-          this._IdConcepto = value;
-      } else {
-          console.error("El Id del concepto debe ser un número entero positivo.");
-      }
+  constructor(id, ingresoGasto, valor, descripcion, fecha, idConcepto) {
+    this.id = id;
+    this.ingresoGasto = ingresoGasto;
+    this.valor = valor;
+    this.descripcion = descripcion;
+    this.fecha = fecha;
+    this.idConcepto = idConcepto;
   }
 }
 
@@ -123,35 +61,30 @@ window.onload = function() {
   // Función para realizar la solicitud AJAX
   function obtenerDatos(tiposSeleccionados) {
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'GastosObtenerTodos.php?tipos=' + JSON.stringify(tiposSeleccionados), true);
+      xhr.open('GET', 'GastosObtenerTodos.php', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
 
       xhr.onload = function() {
-          if (xhr.status === 200) {
+          if (xhr.status === 200 && this.readyState == 4) {
               var response = JSON.parse(xhr.responseText);
               
-              let gastosIngresos=response.map(item => {
-                return new GastosIngresos(
-                    item.Id,
-                    item.IngresoGasto,
-                    item.Valor,
-                    item.Descripcion,
-                    item.Fecha,
-                    item.IdConcepto
-                );
-              });
+              // Convertimos response en un array de objetos GastosIngresos
+            let gastosIngresos = response.map(item => 
+                new GastosIngresos(item.Id, item.Ingreso_gasto, item.Valor, item.Descripcion, item.Fecha, item.Id_concepto)
+            );
               // Limpiar los resultados anteriores
               resultadoDiv.innerHTML = '';
 
-              if (response) {
+              if (gastosIngresos) {
+                
                   // Crear una tabla con los resultados
                   var tablaHTML = '<table id="tablaResultados">';
                   tablaHTML += '<thead><tr><th>ID</th><th>Operación</th><th>Valor</th><th>Descripción</th><th>Fecha</th><th>Concepto</th></tr></thead><tbody>';
 
-                  response.forEach(function(item) {
+                  gastosIngresos.forEach(function(item) {
                       tiposSeleccionados.forEach(function(tipo){
-                        if(item.Ingreso_gasto == tipo){
-                          tablaHTML += `<tr><td>${item.Id}</td><td>${item.Ingreso_gasto}</td><td>${item.Valor}</td><td>${item.Descripcion}</td><td>${item.Fecha}</td></td><td>${item.Id_concepto}</td></tr>`;
+                        if(item.ingresoGasto == tipo){
+                          tablaHTML += `<tr><td>${item.id}</td><td>${item.ingresoGasto}</td><td>${item.valor}</td><td>${item.descripcion}</td><td>${item.fecha}</td></td><td>${item.idConcepto}</td></tr>`;
                         }
                       });
                   });

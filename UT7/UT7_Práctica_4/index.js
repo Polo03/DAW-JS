@@ -1,74 +1,12 @@
 class GastosIngresos {
   // Constructor para inicializar el objeto
-  constructor(Id, IngresoGasto, Valor, Descripcion, Fecha, IdConcepto) {
-      this._Id = Id || null;  // ID del gasto (puede ser null si es un nuevo gasto)
-      this._IngresoGasto = IngresoGasto || '';  // 'Ingreso' o 'Gasto'
-      this._Valor = Valor || 0.00;  // Monto del gasto o ingreso
-      this._Descripcion = Descripcion || '';  // Descripción del gasto
-      this._Fecha = Fecha || '';  // Fecha en formato 'YYYY-MM-DD'
-      this._IdConcepto = IdConcepto || 0;  // Id del concepto relacionado
-  }
-
-  // Getter y Setter para _Id
-  get Id() {
-      return this._Id;
-  }
-
-  set Id(value) {
-      this._Id = value;
-  }
-
-  // Getter y Setter para _IngresoGasto
-  get IngresoGasto() {
-      return this._IngresoGasto;
-  }
-
-  set IngresoGasto(value) {
-      this._IngresoGasto = value;
-  }
-
-  // Getter y Setter para _Valor
-  get Valor() {
-      return this._Valor;
-  }
-
-  set Valor(value) {
-      if (value >= 0) {
-          this._Valor = value;
-      } else {
-          console.error("El valor debe ser positivo.");
-      }
-  }
-
-  // Getter y Setter para _Descripcion
-  get Descripcion() {
-      return this._Descripcion;
-  }
-
-  set Descripcion(value) {
-      this._Descripcion = value;
-  }
-
-  // Getter y Setter para _Fecha
-  get Fecha() {
-      return this._Fecha;
-  }
-
-  set Fecha(value) {
-      this._Fecha = value;
-  }
-
-  // Getter y Setter para _IdConcepto
-  get IdConcepto() {
-      return this._IdConcepto;
-  }
-
-  set IdConcepto(value) {
-      if (Number.isInteger(value) && value > 0) {
-          this._IdConcepto = value;
-      } else {
-          console.error("El Id del concepto debe ser un número entero positivo.");
-      }
+  constructor(id, ingresoGasto, valor, descripcion, fecha, idConcepto) {
+    this.id = id;
+    this.ingresoGasto = ingresoGasto;
+    this.valor = valor;
+    this.descripcion = descripcion;
+    this.fecha = fecha;
+    this.idConcepto = idConcepto;
   }
 }
 
@@ -96,15 +34,12 @@ window.onload = function() {
       checkboxesDiv.style.display = 'block';
   });
 
-  
-
   cargarConceptos();
   // Event listener para los cambios en los checkboxes
   ingresoCheckbox.addEventListener('change', actualizarTabla);
   gastoCheckbox.addEventListener('change', actualizarTabla);
   
   select.addEventListener('change', actualizarTabla);
-  //document.getElementById('conceptosSelect').addEventListener('change', cargarGastos);
   // Función para obtener y actualizar los datos según los checkboxes seleccionados
   function actualizarTabla() {
 
@@ -139,24 +74,15 @@ window.onload = function() {
         xhr.onload = function () {
             if (xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
-                let gastosIngresos = response.map(item => {
-                    return new GastosIngresos(
-                        item.Id,
-                        item.Ingreso_gasto,
-                        item.Valor,
-                        item.Descripcion,
-                        item.Fecha,
-                        item.Id_concepto
-                    );
-                });
-        
+                // Convertimos response en un array de objetos GastosIngresos
+                let gastosIngresos = response.map(item => 
+                    new GastosIngresos(item.Id, item.Ingreso_gasto, item.Valor, item.Descripcion, item.Fecha, item.Id_concepto)
+                );
                 // Limpiar los resultados anteriores
                 resultadoDiv.innerHTML = '';
-        
                 // Crear la tabla
                 var tabla = document.createElement('table');
                 tabla.id = 'tablaResultados';
-        
                 // Crear el encabezado de la tabla
                 var thead = document.createElement('thead');
                 var trHead = document.createElement('tr');
@@ -167,24 +93,20 @@ window.onload = function() {
                 });
                 thead.appendChild(trHead);
                 tabla.appendChild(thead);
-        
                 // Crear el cuerpo de la tabla
                 var tbody = document.createElement('tbody');
-        
                 // Crear un array de promesas para manejar asincronía
                 let promesas = gastosIngresos.flatMap(item => 
                     tiposSeleccionados.map(tipo => {
-                        if (item.IngresoGasto === tipo) {
-                            return obtenerId(datoSeleccionado).then(conceptoId => {
-                                if (conceptoId === item.IdConcepto || conceptoId === null) {
+                        if (item.ingresoGasto === tipo) {
+                            return obtenerId(datoSeleccionado).then(conceptoId => { 
+                                if (conceptoId === item.idConcepto || conceptoId === null) {
                                     var tr = document.createElement('tr');
-        
-                                    [item.Id, item.IngresoGasto, item.Valor, item.Descripcion, item.Fecha, item.IdConcepto].forEach(valor => {
+                                    [item.id, item.ingresoGasto, item.valor, item.descripcion, item.fecha, item.idConcepto].forEach(valor => {
                                         var td = document.createElement('td');
                                         td.textContent = valor;
                                         tr.appendChild(td);
                                     });
-        
                                     tbody.appendChild(tr);
                                 }
                             });
@@ -228,30 +150,6 @@ function cargarConceptos() {
         })
         .catch(error => console.error('Error cargando conceptos:', error));
   }
-  
-  // Función para obtener gastos y mostrarlos en una tabla filtrando por concepto
-  function cargarGastos() {
-    const conceptoId = select.options[select.selectedIndex].textContent;     
-    fetch(`GastosObtenerTodos.php?conceptoId=${conceptoId}`)
-        .then(response => response.json())
-        .then(data => {
-            const tabla = document.getElementById('tablaResultados');
-            tabla.innerHTML = '<tr><th>ID</th><th>Tipo</th><th>Valor</th><th>Descripción</th><th>Fecha</th></tr>';
-            data.forEach(gasto => {
-                const fila = document.createElement('tr');
-                
-                fila.innerHTML = `
-                    <td>${gasto.Id}</td>
-                    <td>${gasto.Ingreso_gasto}</td>
-                    <td>${gasto.Valor}</td>
-                    <td>${gasto.Descripcion}</td>
-                    <td>${gasto.Fecha}</td>
-                `;
-                tabla.appendChild(fila);
-            });
-        })
-        .catch(error => console.error('Error cargando gastos:', error));
-  }
 
   async function obtenerId(nombreConcepto) {
     try {
@@ -267,7 +165,3 @@ function cargarConceptos() {
         return null; // Retorna null en caso de error
     }
 }
-
-
-
-
