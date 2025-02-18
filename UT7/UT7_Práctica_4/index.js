@@ -70,39 +70,25 @@ window.onload = function() {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', 'GastosObtenerTodos.php?tipos=' + JSON.stringify(tiposSeleccionados), true);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        //console.log(obtenerId(valoresSeleccionados));
+    
         xhr.onload = function () {
             if (xhr.status === 200) {
                 var response = JSON.parse(xhr.responseText);
-                // Convertimos response en un array de objetos GastosIngresos
                 let gastosIngresos = response.map(item => 
                     new GastosIngresos(item.Id, item.Ingreso_gasto, item.Valor, item.Descripcion, item.Fecha, item.Id_concepto)
                 );
-                // Limpiar los resultados anteriores
+    
                 resultadoDiv.innerHTML = '';
-                // Crear la tabla
                 var tabla = document.createElement('table');
                 tabla.id = 'tablaResultados';
-                // Crear el encabezado de la tabla
-                var thead = document.createElement('thead');
-                var trHead = document.createElement('tr');
-                ['ID', 'Operación', 'Valor', 'Descripción', 'Fecha', 'Concepto'].forEach(texto => {
-                    var th = document.createElement('th');
-                    th.textContent = texto;
-                    trHead.appendChild(th);
-                });
-                thead.appendChild(trHead);
-                tabla.appendChild(thead);
-                // Crear el cuerpo de la tabla
                 var tbody = document.createElement('tbody');
-                // Crear un array de promesas para manejar asincronía
-                let promesas = gastosIngresos.flatMap(item => 
-                    tiposSeleccionados.map(tipo => {
-                        if (item.ingresoGasto === tipo) {
-                            return obtenerId(valoresSeleccionados).then(conceptos => { 
+    
+                obtenerId(valoresSeleccionados).then(conceptos => { 
+                    let promesas = gastosIngresos.flatMap(item => 
+                        tiposSeleccionados.map(tipo => {
+                            if (item.ingresoGasto === tipo) {
                                 conceptos.forEach(concepto => {
-                                    console.log(concepto +"==="+ item.idConcepto);
-                                    if (concepto == item.idConcepto || concepto === null) {
+                                    if (concepto == item.idConcepto || concepto == null) {
                                         var tr = document.createElement('tr');
                                         [item.id, item.ingresoGasto, item.valor, item.descripcion, item.fecha, item.idConcepto].forEach(valor => {
                                             var td = document.createElement('td');
@@ -112,30 +98,39 @@ window.onload = function() {
                                         tbody.appendChild(tr);
                                     }
                                 });
+                            }
+                        })
+                    );
+    
+                    Promise.all(promesas).then(() => {
+                        if (tbody.children.length > 0) {
+                            var thead = document.createElement('thead');
+                            var trHead = document.createElement('tr');
+                            ['ID', 'Operación', 'Valor', 'Descripción', 'Fecha', 'Concepto'].forEach(texto => {
+                                var th = document.createElement('th');
+                                th.textContent = texto;
+                                trHead.appendChild(th);
                             });
+                            thead.appendChild(trHead);
+                            tabla.appendChild(thead);
+                            tabla.appendChild(tbody);
+                            resultadoDiv.appendChild(tabla);
                         }
-                    })
-                );
-        
-                // Esperar a que todas las promesas se resuelvan antes de agregar la tabla al `resultadoDiv`
-                Promise.all(promesas).then(() => {
-                    tabla.appendChild(tbody);
-                    resultadoDiv.appendChild(tabla);
+                    });
                 });
-        
+    
             } else {
                 resultadoDiv.innerHTML = '<p>Error al realizar la consulta.</p>';
             }
         };
-        
-  
+    
         xhr.onerror = function() {
             resultadoDiv.innerHTML = '<p>Hubo un error al procesar la solicitud.</p>';
         };
-  
+    
         xhr.send();
     }
-  };
+};   
 // Función para obtener conceptos desde el servidor y mostrarlos en un select
 function cargarConceptos() {
     fetch('ConceptosObtenerTodos.php')
@@ -155,26 +150,29 @@ function cargarConceptos() {
   }
 
   async function obtenerId(nombreConceptos) {
+    console.log(nombreConceptos);
     try {
-        let conceptos=[];
+        let conceptos = [];
         const response = await fetch('ConceptosObtenerTodos.php');
         const data = await response.json();
+
+        // Si no hay conceptos seleccionados, devolver todos los IDs
+        if (nombreConceptos.length === 0) {
+            return data.map(dato => dato.id);
+        }
+
+        // Filtrar solo los conceptos seleccionados
         data.forEach(dato => {
             nombreConceptos.forEach(concepto => {
-                if(dato.id==concepto){
+                if (dato.id == concepto) {
                     conceptos.push(concepto);
                 }
-               
             });
         });
+
         return conceptos;
-
-        // Buscar el concepto por nombre
-        //const concepto = data.find(concepto => concepto.nombre === nombreConcepto);
-
-        //return concepto ? concepto.id : null; // Retorna el ID si se encuentra, si no, null
     } catch (error) {
         console.error('Error cargando conceptos:', error);
-        return null; // Retorna null en caso de error
+        return []; // Retorna un array vacío en caso de error
     }
 }
