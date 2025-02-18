@@ -9,6 +9,8 @@ class GastosIngresos {
     }
 }
 
+let conceptosMap = {};  // Mapa para almacenar los conceptos por su ID
+
 window.onload = function() {
     var btnConsultar = document.getElementById('btnConsultar');
     var ingresoCheckbox = document.getElementById('ingreso');
@@ -26,7 +28,7 @@ window.onload = function() {
         checkboxesDiv.style.display = 'block';
     });
 
-    cargarConceptos();
+    cargarConceptos();  // Cargar conceptos en la página
     
     ingresoCheckbox.addEventListener('change', actualizarTabla);
     gastoCheckbox.addEventListener('change', actualizarTabla);
@@ -104,7 +106,9 @@ window.onload = function() {
                                         (!radioSeleccionado || item.valor > 0) && 
                                         (!fechaSeleccionada || item.fecha === fechaSeleccionada)) {
                                         var tr = document.createElement('tr');
-                                        [item.id, item.ingresoGasto, item.valor, item.descripcion, item.fecha, item.idConcepto].forEach(valor => {
+                                        // Reemplazar el idConcepto por el nombre del concepto
+                                        var conceptoNombre = conceptosMap[item.idConcepto] || 'Desconocido';
+                                        [item.id, item.ingresoGasto, item.valor, item.descripcion, item.fecha, conceptoNombre].forEach(valor => {
                                             var td = document.createElement('td');
                                             td.textContent = valor;
                                             tr.appendChild(td);
@@ -148,6 +152,9 @@ function cargarConceptos() {
                 option.value = concepto.id;
                 option.textContent = concepto.nombre;
                 select.appendChild(option);
+
+                // Almacenar cada concepto en el mapa
+                conceptosMap[concepto.id] = concepto.nombre;
             });
         })
         .catch(error => console.error('Error cargando conceptos:', error));
