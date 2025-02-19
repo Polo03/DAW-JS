@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="examen_2Eva_2025.js"></script>
+    <title>EXAMEN AJAX 2025</title>
+</head>
+<body>
+    <h1>Consulta BBDD del servidor.</h1>
+   
+    <br>
+    <label for="n_filas">Selecciona Nº de filas de la tabla:</label>
+    <input type="range" id="n_filas" name="n_filas" min="1" max="10" step="1" value="1" >
+    <output id="output">1</output>
+    
+    <H2>Consulta de Gastos:</h2><span>(seleciona número de filas para que aparezcan los datos)</span>
+    
+    
+    <div id="contenido"></div>
+    <div id="paginacion" style="display: none;">
+        <button id="atras">&lt; Atrás</button>
+        <button id="adelante" >Adelante &gt;</button>
+    </div>
+</body>
+</html>
