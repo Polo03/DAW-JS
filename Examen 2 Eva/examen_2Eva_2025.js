@@ -11,7 +11,7 @@ class GastosIngresos {
 }
 
 let conceptosMap = {};  // Mapa para almacenar los conceptos por su ID
-
+let index = 0;
 window.onload = function(){
     var rango = document.getElementById("n_filas");
 
@@ -29,7 +29,9 @@ window.onload = function(){
 
     var gastosIngresosAPaginar=[];
 
-    var index = 0;
+    
+
+    var numero = 0;
 
     cargarConceptos();
 
@@ -83,15 +85,16 @@ window.onload = function(){
         var tbody = document.createElement('tbody');
         var tr = document.createElement('tr');
         gastosIngresosAPaginar=[];
+        console.log(index);
         //Guardamos los elementos para paginar
-        if(index==0){
+        if(index<=0){
             botonAtras.style.display = 'none';
             for(i=index;i< rango.value;i++){
                 gastosIngresosAPaginar.push(gastosIngresos[i]);
             }
         }else{
             botonAtras.style.display = 'block';
-            var numero =Number.parseFloat(rango.value);
+            numero = Number.parseFloat(rango.value);
             let hasta= index+Number.parseFloat(numero)
             if(hasta>=29){
                 botonAdelante.style.display = 'none';
@@ -99,6 +102,7 @@ window.onload = function(){
                     gastosIngresosAPaginar.push(gastosIngresos[i-1]);
                 }
             }else{
+                botonAdelante.style.display = 'block';
                 for(i=index+1;i<hasta+1;i++){
                     gastosIngresosAPaginar.push(gastosIngresos[i-1]);
                 }
@@ -132,10 +136,14 @@ window.onload = function(){
 
     //Par ir para atras
     function cambioAtras(){
+        console.log(gastosIngresosAPaginar[0]);
         gastosIngresos.forEach((element, key) => {
-            if(element.id == gastosIngresosAPaginar[gastosIngresosAPaginar.length-1].id)
-                console.log(key-3)
+            console.log(element);
+            if(element.id == gastosIngresosAPaginar[0].id){
+                index=key-numero;
+            }
         });
+        console.log(index) 
         actualizarTabla();
     }
 
@@ -145,6 +153,7 @@ window.onload = function(){
             if(element.id == gastosIngresosAPaginar[gastosIngresosAPaginar.length-1].id)
                 index=key+1;
         });
+        
         actualizarTabla();
     }
     
